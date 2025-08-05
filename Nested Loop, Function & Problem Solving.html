@@ -383,13 +383,13 @@
             <div class="section pseudo-code">
                 <h3>📝 Pseudo Code</h3>
                 <div class="code-block">
-FOR i = 1 to n:
-    FOR j = 1 to required_columns:
-        IF condition_for_pattern:
-            PRINT character
-        ELSE:
-            PRINT space
-    PRINT newline
+FOR i = 1 to n:  <br>
+    FOR j = 1 to required_columns: <br>
+        IF condition_for_pattern: <br>
+            PRINT character <br>
+        ELSE: <br>
+            PRINT space <br>
+    PRINT newline <br>
                 </div>
             </div>
 
@@ -441,15 +441,15 @@ FOR i = 1 to n:
             <div class="section pseudo-code">
                 <h3>📝 Pseudo Code</h3>
                 <div class="code-block">
-FUNCTION isPrime(n):
-    IF n <= 1: RETURN false
-    IF n == 2: RETURN true
-    IF n % 2 == 0: RETURN false
+FUNCTION isPrime(n): <br>
+    IF n <= 1: RETURN false <br>
+    IF n == 2: RETURN true <br>
+    IF n % 2 == 0: RETURN false <br>
     
-    FOR i = 3 to sqrt(n) step 2:
-        IF n % i == 0: RETURN false
+    FOR i = 3 to sqrt(n) step 2: <br>
+        IF n % i == 0: RETURN false <br>
     
-    RETURN true
+    RETURN true <br>
                 </div>
             </div>
 
@@ -498,18 +498,18 @@ FUNCTION isPrime(n):
             <div class="section pseudo-code">
                 <h3>📝 Pseudo Code</h3>
                 <div class="code-block">
-FUNCTION gcd(a, b):
-    IF b == 0: RETURN a
-    RETURN gcd(b, a % b)
+FUNCTION gcd(a, b): <br>
+    IF b == 0: RETURN a <br>
+    RETURN gcd(b, a % b) <br>
 
-FUNCTION extendedGCD(a, b):
-    IF b == 0: RETURN (a, 1, 0)
+FUNCTION extendedGCD(a, b): <br>
+    IF b == 0: RETURN (a, 1, 0) <br>
     
-    gcd, x1, y1 = extendedGCD(b, a % b)
-    x = y1
-    y = x1 - (a / b) * y1
+    gcd, x1, y1 = extendedGCD(b, a % b) <br>
+    x = y1 <br>
+    y = x1 - (a / b) * y1 <br>
     
-    RETURN (gcd, x, y)
+    RETURN (gcd, x, y) <br>
                 </div>
             </div>
 
@@ -553,16 +553,16 @@ FUNCTION extendedGCD(a, b):
             <div class="section pseudo-code">
                 <h3>📝 Pseudo Code</h3>
                 <div class="code-block">
-FUNCTION lcm(a, b):
-    gcd_value = gcd(a, b)
-    RETURN (a * b) / gcd_value
+FUNCTION lcm(a, b): <br>
+    gcd_value = gcd(a, b) <br>
+    RETURN (a * b) / gcd_value <br>
 
-FUNCTION gcd(a, b):
-    WHILE b != 0:
-        temp = b
-        b = a % b
-        a = temp
-    RETURN a
+FUNCTION gcd(a, b): <br>
+    WHILE b != 0: <br>
+        temp = b <br>
+        b = a % b <br>
+        a = temp <br>
+    RETURN a <br>
                 </div>
             </div>
 
@@ -607,18 +607,18 @@ FUNCTION gcd(a, b):
             <div class="section pseudo-code">
                 <h3>📝 Pseudo Code</h3>
                 <div class="code-block">
-FUNCTION sieveOfEratosthenes(n):
-    prime = array of size n+1, all true
-    prime[0] = prime[1] = false
+FUNCTION sieveOfEratosthenes(n): <br>
+    prime = array of size n+1, all true <br>
+    prime[0] = prime[1] = false <br>
     
-    FOR i = 2 to sqrt(n):
-        IF prime[i]:
-            FOR j = i*i to n step i:
-                prime[j] = false
+    FOR i = 2 to sqrt(n): <br>
+        IF prime[i]: <br>
+            FOR j = i*i to n step i: <br>
+                prime[j] = false <br>
     
-    primes = []
-    FOR i = 2 to n:
-        IF prime[i]: primes.add(i)
+    primes = [] <br>
+    FOR i = 2 to n: <br>
+        IF prime[i]: primes.add(i) <br>
     
     RETURN primes
                 </div>
@@ -668,18 +668,18 @@ FUNCTION sieveOfEratosthenes(n):
             <div class="section pseudo-code">
                 <h3>📝 Pseudo Code</h3>
                 <div class="code-block">
-FUNCTION nCr(n, r):
-    IF r > n: RETURN 0
-    IF r == 0 OR r == n: RETURN 1
+FUNCTION nCr(n, r): <br>
+    IF r > n: RETURN 0 <br>
+    IF r == 0 OR r == n: RETURN 1 <br>
     
-    // Optimize: nCr = nC(n-r)
-    IF r > n - r: r = n - r
+    // Optimize: nCr = nC(n-r) <br>
+    IF r > n - r: r = n - r <br>
     
-    result = 1
-    FOR i = 0 to r-1:
-        result = result * (n - i) / (i + 1)
+    result = 1 <br>
+    FOR i = 0 to r-1: <br>
+        result = result * (n - i) / (i + 1) <br>
     
-    RETURN result
+    RETURN result <br>
                 </div>
             </div>
 
