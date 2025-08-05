@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programming Concepts Visualizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(45deg, #4834d4, #686de0);
+            transform: scale(1.05);
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .section h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .problem-statement {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .explanation {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .algorithm {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .pseudo-code {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
+        }
+
+        .visualization {
+            background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+            color: #333;
+        }
+
+        .code-implementation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .code-block {
+            background: rgba(0,0,0,0.9);
+            color: #0f0;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+            border-left: 4px solid #00ff00;
+            position: relative;
+        }
+
+        .code-implementation-block {
+            background: rgba(0,0,0,0.9);
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+            border-left: 4px solid #007bff;
+            position: relative;
+            min-height: 200px;
+        }
+
+        .code-line {
+            display: block;
+            padding: 2px 0;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            opacity: 0.3;
+        }
+
+        .code-line.highlight {
+            background: rgba(255, 255, 0, 0.2);
+            opacity: 1;
+            transform: scale(1.02);
+            box-shadow: 0 0 10px rgba(255, 255, 0, 0.3);
+        }
+
+        .code-line.executed {
+            opacity: 1;
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .syntax-keyword { color: #ff79c6; font-weight: bold; }
+        .syntax-function { color: #50fa7b; }
+        .syntax-string { color: #f1fa8c; }
+        .syntax-number { color: #bd93f9; }
+        .syntax-comment { color: #6272a4; font-style: italic; }
+        .syntax-variable { color: #8be9fd; }
+        .syntax-operator { color: #ff79c6; }
+
+        .visualization-area {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px 0;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ddd;
+        }
+
+        .pattern-display {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            line-height: 1.2;
+            text-align: center;
+            color: #333;
+        }
+
+        .controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .control-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .input-field {
+            padding: 8px 15px;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .result-display {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+            font-family: monospace;
+            font-size: 16px;
+        }
+
+        .highlight {
+            background: yellow;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .math-formula {
+            background: rgba(255,255,255,0.9);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 18px;
+            color: #333;
+            border: 2px solid #007bff;
+        }
+
+        .step-animation {
+            transition: all 0.5s ease;
+        }
+
+        .number-grid {
+            display: grid;
+            gap: 5px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .number-cell {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .prime-number {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .composite-number {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .processing {
+            background: #ffc107;
+            border-color: #ffc107;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .pattern-row {
+            margin: 5px 0;
+            transition: all 0.5s ease;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .pattern-row.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .pascal-cell {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            margin: 2px;
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            border-radius: 50%;
+            color: #333;
+            font-weight: bold;
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Programming Concepts Visualizer</h1>
+            <p>Interactive learning for Pattern Printing, Primes, GCD, LCM, Sieve, and nCr</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showTab('patterns')">Pattern Printing</button>
+            <button class="tab-btn" onclick="showTab('primes')">Prime Numbers</button>
+            <button class="tab-btn" onclick="showTab('gcd')">GCD & Extended GCD</button>
+            <button class="tab-btn" onclick="showTab('lcm')">LCM</button>
+            <button class="tab-btn" onclick="showTab('sieve')">Sieve of Eratosthenes</button>
+            <button class="tab-btn" onclick="showTab('ncr')">nCr (Combinations)</button>
+        </div>
+
+        <!-- Pattern Printing Tab -->
+        <div id="patterns" class="tab-content active">
+            <div class="section problem-statement">
+                <h3>🎯 Problem Statement</h3>
+                <p>Pattern printing is a fundamental programming concept that helps develop logical thinking and loop control. We need to create various geometric patterns using characters or numbers.</p>
+            </div>
+
+            <div class="section explanation">
+                <h3>📚 Explanation</h3>
+                <p>Pattern printing involves understanding the relationship between rows, columns, and the characters to be printed. Each pattern has a mathematical relationship that determines what to print at each position.</p>
+            </div>
+
+            <div class="section algorithm">
+                <h3>⚙️ Algorithm</h3>
+                <p><strong>General Steps:</strong></p>
+                <ol>
+                    <li>Identify the number of rows and columns needed</li>
+                    <li>Find the mathematical relationship for each position</li>
+                    <li>Use nested loops (outer for rows, inner for columns)</li>
+                    <li>Apply the pattern logic inside the loops</li>
+                </ol>
+            </div>
+
+            <div class="section pseudo-code">
+                <h3>📝 Pseudo Code</h3>
+                <div class="code-block">
+FOR i = 1 to n:
+    FOR j = 1 to required_columns:
+        IF condition_for_pattern:
+            PRINT character
+        ELSE:
+            PRINT space
+    PRINT newline
+                </div>
+            </div>
+
+            <div class="section code-implementation">
+                <h3>💻 Code Implementation</h3>
+                <div class="controls">
+                    <select id="patternCodeLang">
+                        <option value="cpp">C++</option>
+                        <option value="java">Java</option>
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                    </select>
+                    <button class="control-btn" onclick="showPatternCode()">Show Code</button>
+                    <button class="control-btn" onclick="animatePatternCode()">Animate Code</button>
+                </div>
+                <div id="patternCodeDisplay" class="code-implementation-block"></div>
+            </div>
+
+            <div class="section code-implementation">
+                <h3>💻 Code Implementation</h3>
+                <div class="controls">
+                    <select id="primeCodeLang">
+                        <option value="cpp">C++</option>
+                        <option value="java">Java</option>
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                    </select>
+                    <button class="control-btn" onclick="showPrimeCode()">Show Code</button>
+                    <button class="control-btn" onclick="animatePrimeCode()">Animate Code</button>
+                </div>
+                <div id="primeCodeDisplay" class="code-implementation-block"></div>
+            </div>
+
+            <div class="section code-implementation">
+                <h3>💻 Code Implementation</h3>
+                <div class="controls">
+                    <select id="gcdCodeLang">
+                        <option value="cpp">C++</option>
+                        <option value="java">Java</option>
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                    </select>
+                    <button class="control-btn" onclick="showGCDCode()">Show Code</button>
+                    <button class="control-btn" onclick="animateGCDCode()">Animate Code</button>
+                </div>
+                <div id="gcdCodeDisplay" class="code-implementation-block"></div>
+            </div>
+
+            <div class="section code-implementation">
+                <h3>💻 Code Implementation</h3>
+                <div class="controls">
+                    <select id="lcmCodeLang">
+                        <option value="cpp">C++</option>
+                        <option value="java">Java</option>
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                    </select>
+                    <button class="control-btn" onclick="showLCMCode()">Show Code</button>
+                    <button class="control-btn" onclick="animateLCMCode()">Animate Code</button>
+                </div>
+                <div id="lcmCodeDisplay" class="code-implementation-block"></div>
+            </div>
+
+            <div class="section code-implementation">
+                <h3>💻 Code Implementation</h3>
+                <div class="controls">
+                    <select id="sieveCodeLang">
+                        <option value="cpp">C++</option>
+                        <option value="java">Java</option>
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                    </select>
+                    <button class="control-btn" onclick="showSieveCode()">Show Code</button>
+                    <button class="control-btn" onclick="animateSieveCode()">Animate Code</button>
+                </div>
+                <div id="sieveCodeDisplay" class="code-implementation-block"></div>
+            </div>
+
+            <div class="section code-implementation">
+                <h3>💻 Code Implementation</h3>
+                <div class="controls">
+                    <select id="ncrCodeLang">
+                        <option value="cpp">C++</option>
+                        <option value="java">Java</option>
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                    </select>
+                    <button class="control-btn" onclick="showNCRCode()">Show Code</button>
+                    <button class="control-btn" onclick="animateNCRCode()">Animate Code</button>
+                </div>
+                <div id="ncrCodeDisplay" class="code-implementation-block"></div>
+            </div>
+
+            <div class="section visualization">
+                <h3>🎨 Visualization</h3>
+                <div class="controls">
+                    <select id="patternType" onchange="updatePattern()">
+                        <option value="triangle">Right-Angled Triangle</option>
+                        <option value="inverted">Inverted Triangle</option>
+                        <option value="pyramid">Pyramid</option>
+                        <option value="diamond">Diamond</option>
+                        <option value="number">Number Pyramid</option>
+                        <option value="pascal">Pascal's Triangle</option>
+                    </select>
+                    <input type="number" id="patternSize" value="5" min="1" max="10" onchange="updatePattern()">
+                    <button class="control-btn" onclick="animatePattern()">Animate</button>
+                </div>
+                <div class="visualization-area">
+                    <div id="patternDisplay" class="pattern-display"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prime Numbers Tab -->
+        <div id="primes" class="tab-content">
+            <div class="section problem-statement">
+                <h3>🎯 Problem Statement</h3>
+                <p>Determine if a given number is prime. A prime number is a natural number greater than 1 that has no positive divisors other than 1 and itself.</p>
+            </div>
+
+            <div class="section explanation">
+                <h3>📚 Explanation</h3>
+                <p>Prime numbers are fundamental in mathematics and computer science. To check if a number n is prime, we only need to check divisibility up to √n, as any factor larger than √n would have a corresponding factor smaller than √n.</p>
+            </div>
+
+            <div class="section algorithm">
+                <h3>⚙️ Algorithm</h3>
+                <ol>
+                    <li>If n ≤ 1, return false</li>
+                    <li>If n = 2, return true</li>
+                    <li>If n is even, return false</li>
+                    <li>Check odd divisors from 3 to √n</li>
+                    <li>If any divisor found, return false; otherwise true</li>
+                </ol>
+            </div>
+
+            <div class="section pseudo-code">
+                <h3>📝 Pseudo Code</h3>
+                <div class="code-block">
+FUNCTION isPrime(n):
+    IF n <= 1: RETURN false
+    IF n == 2: RETURN true
+    IF n % 2 == 0: RETURN false
+    
+    FOR i = 3 to sqrt(n) step 2:
+        IF n % i == 0: RETURN false
+    
+    RETURN true
+                </div>
+            </div>
+
+            <div class="section visualization">
+                <h3>🎨 Visualization</h3>
+                <div class="controls">
+                    <input type="number" id="primeInput" value="17" min="1" max="100">
+                    <button class="control-btn" onclick="checkPrime()">Check Prime</button>
+                    <button class="control-btn" onclick="visualizePrimeCheck()">Visualize Check</button>
+                </div>
+                <div class="visualization-area">
+                    <div id="primeResult" class="result-display"></div>
+                    <div id="primeVisualization"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GCD Tab -->
+        <div id="gcd" class="tab-content">
+            <div class="section problem-statement">
+                <h3>🎯 Problem Statement</h3>
+                <p>Find the Greatest Common Divisor (GCD) of two numbers using Euclidean algorithm and Extended Euclidean algorithm to find coefficients x, y such that ax + by = gcd(a,b).</p>
+            </div>
+
+            <div class="section explanation">
+                <h3>📚 Explanation</h3>
+                <p>The Euclidean algorithm is based on the principle that GCD(a,b) = GCD(b, a mod b). The Extended Euclidean algorithm not only finds GCD but also the Bézout coefficients.</p>
+                <div class="math-formula">gcd(a, b) = gcd(b, a mod b)</div>
+            </div>
+
+            <div class="section algorithm">
+                <h3>⚙️ Algorithm</h3>
+                <p><strong>Euclidean:</strong></p>
+                <ol>
+                    <li>If b = 0, return a</li>
+                    <li>Otherwise, return gcd(b, a mod b)</li>
+                </ol>
+                <p><strong>Extended Euclidean:</strong></p>
+                <ol>
+                    <li>If b = 0, return (a, 1, 0)</li>
+                    <li>Find gcd(b, a mod b) and coefficients</li>
+                    <li>Update coefficients based on recurrence relation</li>
+                </ol>
+            </div>
+
+            <div class="section pseudo-code">
+                <h3>📝 Pseudo Code</h3>
+                <div class="code-block">
+FUNCTION gcd(a, b):
+    IF b == 0: RETURN a
+    RETURN gcd(b, a % b)
+
+FUNCTION extendedGCD(a, b):
+    IF b == 0: RETURN (a, 1, 0)
+    
+    gcd, x1, y1 = extendedGCD(b, a % b)
+    x = y1
+    y = x1 - (a / b) * y1
+    
+    RETURN (gcd, x, y)
+                </div>
+            </div>
+
+            <div class="section visualization">
+                <h3>🎨 Visualization</h3>
+                <div class="controls">
+                    <input type="number" id="gcdA" value="48" min="1">
+                    <input type="number" id="gcdB" value="18" min="1">
+                    <button class="control-btn" onclick="calculateGCD()">Calculate GCD</button>
+                    <button class="control-btn" onclick="calculateExtendedGCD()">Extended GCD</button>
+                </div>
+                <div class="visualization-area">
+                    <div id="gcdResult" class="result-display"></div>
+                    <div id="gcdSteps"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LCM Tab -->
+        <div id="lcm" class="tab-content">
+            <div class="section problem-statement">
+                <h3>🎯 Problem Statement</h3>
+                <p>Find the Least Common Multiple (LCM) of two numbers. LCM is the smallest positive integer that is divisible by both numbers.</p>
+            </div>
+
+            <div class="section explanation">
+                <h3>📚 Explanation</h3>
+                <p>LCM can be calculated using the relationship: LCM(a,b) = (a × b) / GCD(a,b). This is more efficient than finding all multiples.</p>
+                <div class="math-formula">LCM(a, b) = (a × b) / GCD(a, b)</div>
+            </div>
+
+            <div class="section algorithm">
+                <h3>⚙️ Algorithm</h3>
+                <ol>
+                    <li>Calculate GCD(a, b) using Euclidean algorithm</li>
+                    <li>Calculate LCM = (a × b) / GCD(a, b)</li>
+                    <li>Return LCM</li>
+                </ol>
+            </div>
+
+            <div class="section pseudo-code">
+                <h3>📝 Pseudo Code</h3>
+                <div class="code-block">
+FUNCTION lcm(a, b):
+    gcd_value = gcd(a, b)
+    RETURN (a * b) / gcd_value
+
+FUNCTION gcd(a, b):
+    WHILE b != 0:
+        temp = b
+        b = a % b
+        a = temp
+    RETURN a
+                </div>
+            </div>
+
+            <div class="section visualization">
+                <h3>🎨 Visualization</h3>
+                <div class="controls">
+                    <input type="number" id="lcmA" value="12" min="1">
+                    <input type="number" id="lcmB" value="18" min="1">
+                    <button class="control-btn" onclick="calculateLCM()">Calculate LCM</button>
+                    <button class="control-btn" onclick="showLCMMultiples()">Show Multiples</button>
+                </div>
+                <div class="visualization-area">
+                    <div id="lcmResult" class="result-display"></div>
+                    <div id="lcmVisualization"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sieve Tab -->
+        <div id="sieve" class="tab-content">
+            <div class="section problem-statement">
+                <h3>🎯 Problem Statement</h3>
+                <p>Find all prime numbers up to a given limit n using the Sieve of Eratosthenes algorithm efficiently.</p>
+            </div>
+
+            <div class="section explanation">
+                <h3>📚 Explanation</h3>
+                <p>The Sieve of Eratosthenes is an ancient algorithm to find all primes up to n. It works by iteratively marking multiples of each prime as composite, starting from 2.</p>
+            </div>
+
+            <div class="section algorithm">
+                <h3>⚙️ Algorithm</h3>
+                <ol>
+                    <li>Create a boolean array of size n+1, initially all true</li>
+                    <li>Mark 0 and 1 as not prime</li>
+                    <li>For each number i from 2 to √n:</li>
+                    <li>If i is marked as prime, mark all multiples of i as composite</li>
+                    <li>Collect all numbers still marked as prime</li>
+                </ol>
+            </div>
+
+            <div class="section pseudo-code">
+                <h3>📝 Pseudo Code</h3>
+                <div class="code-block">
+FUNCTION sieveOfEratosthenes(n):
+    prime = array of size n+1, all true
+    prime[0] = prime[1] = false
+    
+    FOR i = 2 to sqrt(n):
+        IF prime[i]:
+            FOR j = i*i to n step i:
+                prime[j] = false
+    
+    primes = []
+    FOR i = 2 to n:
+        IF prime[i]: primes.add(i)
+    
+    RETURN primes
+                </div>
+            </div>
+
+            <div class="section visualization">
+                <h3>🎨 Visualization</h3>
+                <div class="controls">
+                    <input type="number" id="sieveLimit" value="30" min="2" max="100">
+                    <button class="control-btn" onclick="runSieve()">Run Sieve</button>
+                    <button class="control-btn" onclick="animateSieve()">Animate Sieve</button>
+                </div>
+                <div class="visualization-area">
+                    <div id="sieveResult" class="result-display"></div>
+                    <div id="sieveGrid" class="number-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- nCr Tab -->
+        <div id="ncr" class="tab-content">
+            <div class="section problem-statement">
+                <h3>🎯 Problem Statement</h3>
+                <p>Calculate nCr (combinations) - the number of ways to choose r items from n items without regard to order.</p>
+            </div>
+
+            <div class="section explanation">
+                <h3>📚 Explanation</h3>
+                <p>Combinations formula: nCr = n! / (r! × (n-r)!). We can optimize using Pascal's triangle identity: nCr = (n-1)C(r-1) + (n-1)Cr</p>
+                <div class="math-formula">nCr = n! / (r! × (n-r)!)</div>
+            </div>
+
+            <div class="section algorithm">
+                <h3>⚙️ Algorithm</h3>
+                <p><strong>Method 1 - Direct Formula:</strong></p>
+                <ol>
+                    <li>Calculate n!, r!, and (n-r)!</li>
+                    <li>Apply formula nCr = n! / (r! × (n-r)!)</li>
+                </ol>
+                <p><strong>Method 2 - Optimized:</strong></p>
+                <ol>
+                    <li>Use nCr = nC(n-r) if r > n-r</li>
+                    <li>Calculate iteratively to avoid large factorials</li>
+                </ol>
+            </div>
+
+            <div class="section pseudo-code">
+                <h3>📝 Pseudo Code</h3>
+                <div class="code-block">
+FUNCTION nCr(n, r):
+    IF r > n: RETURN 0
+    IF r == 0 OR r == n: RETURN 1
+    
+    // Optimize: nCr = nC(n-r)
+    IF r > n - r: r = n - r
+    
+    result = 1
+    FOR i = 0 to r-1:
+        result = result * (n - i) / (i + 1)
+    
+    RETURN result
+                </div>
+            </div>
+
+            <div class="section visualization">
+                <h3>🎨 Visualization</h3>
+                <div class="controls">
+                    <input type="number" id="nValue" value="10" min="0" max="20">
+                    <input type="number" id="rValue" value="3" min="0" max="20">
+                    <button class="control-btn" onclick="calculateNCR()">Calculate nCr</button>
+                    <button class="control-btn" onclick="showPascalTriangle()">Pascal's Triangle</button>
+                </div>
+                <div class="visualization-area">
+                    <div id="ncrResult" class="result-display"></div>
+                    <div id="ncrVisualization"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Pattern Printing Functions
+        function updatePattern() {
+            const type = document.getElementById('patternType').value;
+            const size = parseInt(document.getElementById('patternSize').value);
+            const display = document.getElementById('patternDisplay');
+            
+            let pattern = '';
+            
+            switch(type) {
+                case 'triangle':
+                    pattern = generateTriangle(size);
+                    break;
+                case 'inverted':
+                    pattern = generateInvertedTriangle(size);
+                    break;
+                case 'pyramid':
+                    pattern = generatePyramid(size);
+                    break;
+                case 'diamond':
+                    pattern = generateDiamond(size);
+                    break;
+                case 'number':
+                    pattern = generateNumberPyramid(size);
+                    break;
+                case 'pascal':
+                    pattern = generatePascalTriangle(size);
+                    break;
+            }
+            
+            display.innerHTML = pattern;
+        }
+
+        function generateTriangle(n) {
+            let result = '';
+            for (let i = 1; i <= n; i++) {
+                for (let j = 1; j <= i; j++) {
+                    result += '* ';
+                }
+                result += '<br>';
+            }
+            return result;
+        }
+
+        function generateInvertedTriangle(n) {
+            let result = '';
+            for (let i = n; i >= 1; i--) {
+                for (let j = 1; j <= i; j++) {
+                    result += '* ';
+                }
+                result += '<br>';
+            }
+            return result;
+        }
+
+        function generatePyramid(n) {
+            let result = '';
+            for (let i = 1; i <= n; i++) {
+                // Add spaces
+                for (let j = 1; j <= n - i; j++) {
+                    result += '&nbsp;&nbsp;';
+                }
+                // Add stars
+                for (let k = 1; k <= 2 * i - 1; k++) {
+                    result += '*';
+                }
+                result += '<br>';
+            }
+            return result;
+        }
+
+        function generateDiamond(n) {
+            let result = '';
+            // Upper half
+            for (let i = 1; i <= n; i++) {
+                for (let j = 1; j <= n - i; j++) {
+                    result += '&nbsp;&nbsp;';
+                }
+                for (let k = 1; k <= 2 * i - 1; k++) {
+                    result += '*';
+                }
+                result += '<br>';
+            }
+            // Lower half
+            for (let i = n - 1; i >= 1; i--) {
+                for (let j = 1; j <= n - i; j++) {
+                    result += '&nbsp;&nbsp;';
+                }
+                for (let k = 1; k <= 2 * i - 1; k++) {
+                    result += '*';
+                }
+                result += '<br>';
+            }
+            return result;
+        }
+
+        function generateNumberPyramid(n) {
+            let result = '';
+            for (let i = 1; i <= n; i++) {
+                for (let j = 1; j <= n - i; j++) {
+                    result += '&nbsp;&nbsp;';
+                }
+                for (let k = 1; k <= i; k++) {
+                    result += k + ' ';
+                }
+                result += '<br>';
+            }
+            return result;
+        }
+
+        function generatePascalTriangle(n) {
+            let result = '';
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n - i; j++) {
+                    result += '&nbsp;&nbsp;';
+                }
+                for (let k = 0; k <= i; k++) {
+                    const value = binomialCoeff(i, k);
+                    result += `<span class="pascal-cell">${value}</span>`;
+                }
+                result += '<br>';
+            }
+            return result;
+        }
+
+        function binomialCoeff(n, k) {
+            if (k > n - k) k = n - k;
+            let result = 1;
+            for (let i = 0; i < k; i++) {
+                result = result * (n - i) / (i + 1);
+            }
+            return Math.round(result);
+        }
+
+        function animatePattern() {
+            const display = document.getElementById('patternDisplay');
+            const rows = display.innerHTML.split('<br>');
+            display.innerHTML = '';
+            
+            rows.forEach((row, index) => {
+                setTimeout(() => {
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'pattern-row';
+                    rowDiv.innerHTML = row;
+                    display.appendChild(rowDiv);
+                    setTimeout(() => rowDiv.classList.add('visible'), 100);
+                }, index * 200);
+            });
+        }
+
+        // Prime Number Functions
+        function checkPrime() {
+            const num = parseInt(document.getElementById('primeInput').value);
+            const result = document.getElementById('primeResult');
+            const isPrimeResult = isPrime(num);
+            
+            result.innerHTML = `
+                <strong>Number: ${num}</strong><br>
+                <strong>Is Prime: ${isPrimeResult ? 'YES' : 'NO'}</strong><br>
+                <strong>Explanation:</strong> ${getPrimeExplanation(num, isPrimeResult)}
+            `;
+        }
+
+        function isPrime(n) {
+            if (n <= 1) return false;
+            if (n === 2) return true;
+            if (n % 2 === 0) return false;
+            
+            for (let i = 3; i <= Math.sqrt(n); i += 2) {
+                if (n % i === 0) return false;
+            }
+            return true;
+        }
+
+        function getPrimeExplanation(num, isPrimeResult) {
+            if (num <= 1) return "Numbers ≤ 1 are not prime by definition.";
+            if (num === 2) return "2 is the only even prime number.";
+            if (num % 2 === 0) return "Even numbers > 2 cannot be prime.";
+            
+            if (isPrimeResult) {
+                return `No divisors found between 3 and √${num} ≈ ${Math.sqrt(num).toFixed(2)}.`;
+            } else {
+                for (let i = 3; i <= Math.sqrt(num); i += 2) {
+                    if (num % i === 0) {
+                        return `Found divisor: ${i} (${num} ÷ ${i} = ${num/i}).`;
+                    }
+                }
+            }
+        }
+
+        function visualizePrimeCheck() {
+            const num = parseInt(document.getElementById('primeInput').value);
+            const visualization = document.getElementById('primeVisualization');
+            
+            let html = `<h4>Checking if ${num} is prime:</h4>`;
+            html += `<div class="step-animation">`;
+            
+            if (num <= 1) {
+                html += `<p>❌ ${num} ≤ 1, so it's not prime.</p>`;
+            } else if (num === 2) {
+                html += `<p>✅ 2 is prime (the only even prime).</p>`;
+            } else if (num % 2 === 0) {
+                html += `<p>❌ ${num} is even and > 2, so it's not prime.</p>`;
+            } else {
+                html += `<p>🔍 Checking odd divisors from 3 to √${num} ≈ ${Math.sqrt(num).toFixed(2)}:</p>`;
+                let found = false;
+                for (let i = 3; i <= Math.sqrt(num); i += 2) {
+                    if (num % i === 0) {
+                        html += `<p>❌ ${num} ÷ ${i} = ${num/i} (divisible)</p>`;
+                        found = true;
+                        break;
+                    } else {
+                        html += `<p>✓ ${num} ÷ ${i} = ${(num/i).toFixed(2)} (not divisible)</p>`;
+                    }
+                }
+                if (!found) {
+                    html += `<p>✅ No divisors found, ${num} is prime!</p>`;
+                }
+            }
+            
+            html += `</div>`;
+            visualization.innerHTML = html;
+        }
+
+        // GCD Functions
+        function calculateGCD() {
+            const a = parseInt(document.getElementById('gcdA').value);
+            const b = parseInt(document.getElementById('gcdB').value);
+            const result = document.getElementById('gcdResult');
+            const steps = document.getElementById('gcdSteps');
+            
+            const gcdResult = gcd(a, b);
+            const gcdSteps = getGCDSteps(a, b);
+            
+            result.innerHTML = `
+                <strong>GCD(${a}, ${b}) = ${gcdResult}</strong>
+            `;
+            
+            steps.innerHTML = `
+                <h4>Euclidean Algorithm Steps:</h4>
+                ${gcdSteps.join('<br>')}
+            `;
+        }
+
+        function gcd(a, b) {
+            while (b !== 0) {
+                let temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        function getGCDSteps(a, b) {
+            const steps = [];
+            while (b !== 0) {
+                steps.push(`GCD(${a}, ${b}) → ${a} = ${Math.floor(a/b)} × ${b} + ${a % b}`);
+                let temp = b;
+                b = a % b;
+                a = temp;
+            }
+            steps.push(`GCD(${a}, 0) = ${a}`);
+            return steps;
+        }
+
+        function calculateExtendedGCD() {
+            const a = parseInt(document.getElementById('gcdA').value);
+            const b = parseInt(document.getElementById('gcdB').value);
+            const result = document.getElementById('gcdResult');
+            const steps = document.getElementById('gcdSteps');
+            
+            const [gcdResult, x, y] = extendedGCD(a, b);
+            
+            result.innerHTML = `
+                <strong>Extended GCD Result:</strong><br>
+                GCD(${a}, ${b}) = ${gcdResult}<br>
+                Coefficients: x = ${x}, y = ${y}<br>
+                <span class="highlight">Verification: ${a} × ${x} + ${b} × ${y} = ${a*x + b*y}</span>
+            `;
+            
+            steps.innerHTML = `
+                <h4>Extended Euclidean Algorithm:</h4>
+                <p>Finding x, y such that ${a}x + ${b}y = gcd(${a}, ${b})</p>
+                <p>Result: ${a} × (${x}) + ${b} × (${y}) = ${gcdResult}</p>
+            `;
+        }
+
+        function extendedGCD(a, b) {
+            if (b === 0) {
+                return [a, 1, 0];
+            }
+            
+            const [gcd, x1, y1] = extendedGCD(b, a % b);
+            const x = y1;
+            const y = x1 - Math.floor(a / b) * y1;
+            
+            return [gcd, x, y];
+        }
+
+        // LCM Functions
+        function calculateLCM() {
+            const a = parseInt(document.getElementById('lcmA').value);
+            const b = parseInt(document.getElementById('lcmB').value);
+            const result = document.getElementById('lcmResult');
+            
+            const gcdResult = gcd(a, b);
+            const lcmResult = (a * b) / gcdResult;
+            
+            result.innerHTML = `
+                <strong>LCM Calculation:</strong><br>
+                GCD(${a}, ${b}) = ${gcdResult}<br>
+                LCM(${a}, ${b}) = (${a} × ${b}) ÷ ${gcdResult} = ${lcmResult}
+            `;
+        }
+
+        function showLCMMultiples() {
+            const a = parseInt(document.getElementById('lcmA').value);
+            const b = parseInt(document.getElementById('lcmB').value);
+            const visualization = document.getElementById('lcmVisualization');
+            
+            const gcdResult = gcd(a, b);
+            const lcmResult = (a * b) / gcdResult;
+            
+            let html = `<h4>Finding LCM by listing multiples:</h4>`;
+            html += `<div style="display: flex; gap: 20px;">`;
+            
+            // Multiples of a
+            html += `<div><strong>Multiples of ${a}:</strong><br>`;
+            for (let i = 1; i <= 10; i++) {
+                const multiple = a * i;
+                const isLCM = multiple === lcmResult;
+                html += `<span style="color: ${isLCM ? 'red' : 'blue'}; font-weight: ${isLCM ? 'bold' : 'normal'};">${multiple}</span>, `;
+            }
+            html += `...</div>`;
+            
+            // Multiples of b
+            html += `<div><strong>Multiples of ${b}:</strong><br>`;
+            for (let i = 1; i <= 10; i++) {
+                const multiple = b * i;
+                const isLCM = multiple === lcmResult;
+                html += `<span style="color: ${isLCM ? 'red' : 'green'}; font-weight: ${isLCM ? 'bold' : 'normal'};">${multiple}</span>, `;
+            }
+            html += `...</div>`;
+            
+            html += `</div>`;
+            html += `<p><strong>First common multiple (LCM): ${lcmResult}</strong></p>`;
+            
+            visualization.innerHTML = html;
+        }
+
+        // Sieve Functions
+        function runSieve() {
+            const limit = parseInt(document.getElementById('sieveLimit').value);
+            const primes = sieveOfEratosthenes(limit);
+            const result = document.getElementById('sieveResult');
+            
+            result.innerHTML = `
+                <strong>Prime numbers up to ${limit}:</strong><br>
+                ${primes.join(', ')}<br>
+                <strong>Count: ${primes.length} primes found</strong>
+            `;
+        }
+
+        function sieveOfEratosthenes(n) {
+            const prime = new Array(n + 1).fill(true);
+            prime[0] = prime[1] = false;
+            
+            for (let i = 2; i * i <= n; i++) {
+                if (prime[i]) {
+                    for (let j = i * i; j <= n; j += i) {
+                        prime[j] = false;
+                    }
+                }
+            }
+            
+            const primes = [];
+            for (let i = 2; i <= n; i++) {
+                if (prime[i]) primes.push(i);
+            }
+            
+            return primes;
+        }
+
+        function animateSieve() {
+            const limit = parseInt(document.getElementById('sieveLimit').value);
+            const grid = document.getElementById('sieveGrid');
+            
+            // Create grid
+            grid.innerHTML = '';
+            grid.style.gridTemplateColumns = `repeat(${Math.min(10, limit)}, 1fr)`;
+            
+            const prime = new Array(limit + 1).fill(true);
+            prime[0] = prime[1] = false;
+            
+            // Create cells
+            for (let i = 0; i <= limit; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'number-cell';
+                cell.textContent = i;
+                cell.id = `cell-${i}`;
+                grid.appendChild(cell);
+            }
+            
+            // Mark 0 and 1
+            document.getElementById('cell-0').style.background = '#6c757d';
+            document.getElementById('cell-1').style.background = '#6c757d';
+            
+            let step = 0;
+            const animate = () => {
+                for (let i = 2; i * i <= limit; i++) {
+                    if (prime[i]) {
+                        setTimeout(() => {
+                            document.getElementById(`cell-${i}`).classList.add('processing');
+                            
+                            setTimeout(() => {
+                                document.getElementById(`cell-${i}`).classList.remove('processing');
+                                document.getElementById(`cell-${i}`).classList.add('prime-number');
+                                
+                                // Mark multiples
+                                for (let j = i * i; j <= limit; j += i) {
+                                    if (prime[j]) {
+                                        prime[j] = false;
+                                        setTimeout(() => {
+                                            document.getElementById(`cell-${j}`).classList.add('composite-number');
+                                        }, (j - i * i) * 50);
+                                    }
+                                }
+                            }, 500);
+                        }, step * 1000);
+                        step++;
+                    }
+                }
+                
+                // Final marking of remaining primes
+                setTimeout(() => {
+                    for (let i = 2; i <= limit; i++) {
+                        if (prime[i] && !document.getElementById(`cell-${i}`).classList.contains('prime-number')) {
+                            document.getElementById(`cell-${i}`).classList.add('prime-number');
+                        }
+                    }
+                }, step * 1000);
+            };
+            
+            animate();
+        }
+
+        // nCr Functions
+        function calculateNCR() {
+            const n = parseInt(document.getElementById('nValue').value);
+            const r = parseInt(document.getElementById('rValue').value);
+            const result = document.getElementById('ncrResult');
+            
+            if (r > n) {
+                result.innerHTML = `<strong>Error:</strong> r cannot be greater than n`;
+                return;
+            }
+            
+            const ncrResult = nCr(n, r);
+            const factorialN = factorial(n);
+            const factorialR = factorial(r);
+            const factorialNR = factorial(n - r);
+            
+            result.innerHTML = `
+                <strong>Combination Calculation:</strong><br>
+                C(${n}, ${r}) = ${n}! / (${r}! × (${n}-${r})!)<br>
+                = ${factorialN} / (${factorialR} × ${factorialNR})<br>
+                = ${factorialN} / ${factorialR * factorialNR}<br>
+                = <span class="highlight">${ncrResult}</span>
+            `;
+        }
+
+        function nCr(n, r) {
+            if (r > n) return 0;
+            if (r === 0 || r === n) return 1;
+            
+            if (r > n - r) r = n - r; // Optimize
+            
+            let result = 1;
+            for (let i = 0; i < r; i++) {
+                result = result * (n - i) / (i + 1);
+            }
+            
+            return Math.round(result);
+        }
+
+        function factorial(n) {
+            if (n <= 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) {
+                result *= i;
+            }
+            return result;
+        }
+
+        function showPascalTriangle() {
+            const n = parseInt(document.getElementById('nValue').value);
+            const visualization = document.getElementById('ncrVisualization');
+            
+            let html = `<h4>Pascal's Triangle (showing nCr values):</h4>`;
+            html += `<div style="text-align: center; font-family: monospace;">`;
+            
+            for (let i = 0; i <= Math.min(n, 10); i++) {
+                // Add spacing
+                for (let j = 0; j < 10 - i; j++) {
+                    html += '&nbsp;&nbsp;';
+                }
+                
+                for (let j = 0; j <= i; j++) {
+                    const value = nCr(i, j);
+                    const isHighlighted = i === n && j === parseInt(document.getElementById('rValue').value);
+                    html += `<span style="display: inline-block; width: 40px; text-align: center; ${isHighlighted ? 'background: yellow; font-weight: bold;' : ''}">${value}</span>`;
+                }
+                html += '<br>';
+            }
+            
+            html += `</div>`;
+            if (n <= 10) {
+                const r = parseInt(document.getElementById('rValue').value);
+                html += `<p><strong>Highlighted:</strong> C(${n}, ${r}) = ${nCr(n, r)}</p>`;
+            }
+            
+            visualization.innerHTML = html;
+        }
+
+        // Initialize with default pattern
+        window.onload = function() {
+            updatePattern();
+        };
+    </script>
+</body>
+</html>
